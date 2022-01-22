@@ -24,3 +24,6 @@ rem-*.tar
 
 # Temporary files, for example, from tests.
 /tmp/
+
+# Env files, to load secrets with direnv
+.env
