@@ -86,7 +86,7 @@ $ kill -9 14381
 Tests can be run with:
 
 ```bash
-$ mix test
+$ mix test --no-start
 ```
 
 ## License

@@ -35,7 +35,7 @@ defmodule Rem.Consumer.Meta do
   defp generate_extract_command_from_config do
     for command <- Application.get_env(:rem, :commands, []) do
       command_suffix = command |> String.capitalize |> Kernel.<>("Command")
-      command_alias  = Module.concat(Rem.Commands, command_suffix)
+      command_alias  = Module.safe_concat(Rem.Commands, command_suffix)
 
       quote do
         def extract_command(unquote(command) <> args),

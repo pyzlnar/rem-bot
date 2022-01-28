@@ -1,7 +1,7 @@
 defmodule Rem.Commands.PingCommand do
   @behaviour Rem.Commands.Command
 
-  alias Nostrum.Api
+  alias Rem.Discord.Api
 
   @impl true
   def run(%{channel_id: channel_id}, _args_str),
