@@ -78,6 +78,10 @@ defmodule Injector.Server do
       result = apply(fun, args)
       {:ok, result}
     rescue
+      # TODO: See how feasable it is to get and parse the clauses.
+      # Won't be easy but visually worth it.
+      error in [FunctionClauseError] ->
+        {:error, %{error|args: args}}
       error ->
         case error do
           %{message: message} ->

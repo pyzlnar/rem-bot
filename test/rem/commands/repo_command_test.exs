@@ -5,7 +5,7 @@ defmodule Rem.Commands.RepoCommandTest do
   alias Rem.Commands.RepoCommand
 
   describe "run/2" do
-    test "returns a message stating the bot still lives" do
+    test "returns a message linking to the bot's repository" do
 
       Rem.Discord.Api
       |> expects(:create_message, fn 123456, "https://github.com/pyzlnar/rem-bot" -> :ok end)

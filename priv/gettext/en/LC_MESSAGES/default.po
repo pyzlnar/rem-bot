@@ -1,0 +1,5 @@
+msgid "response:ping"
+msgstr "Still alive!"
+
+msgid "response:repo"
+msgstr "https://github.com/pyzlnar/rem-bot"

@@ -8,7 +8,8 @@ defmodule Rem.MixProject do
       elixir: "~> 1.13",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      compilers: compilers()
     ]
   end
 
@@ -20,6 +21,9 @@ defmodule Rem.MixProject do
     ]
   end
 
+  # Add gettext to compilers so it recompiles when locale files change
+  defp compilers, do: [:gettext] ++ Mix.compilers()
+
   # Load extra paths when on test
   defp elixirc_paths(:test), do: ~W[lib test/support]
   defp elixirc_paths(_), do: ~W[lib]
@@ -27,6 +31,7 @@ defmodule Rem.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:gettext, ">= 0.0.0"},
       {:nostrum, "~> 0.4"}
     ]
   end
