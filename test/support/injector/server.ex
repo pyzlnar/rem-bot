@@ -83,12 +83,7 @@ defmodule Injector.Server do
       error in [FunctionClauseError] ->
         {:error, %{error|args: args}}
       error ->
-        case error do
-          %{message: message} ->
-            {:error, message}
-          other ->
-            {:error, other}
-        end
+        {:error, error}
     end
   end
 

@@ -11,6 +11,7 @@ config :logger,
 
 config :rem,
   commands: ~W[
+    help
     ping
     repo
   ],
