@@ -17,4 +17,11 @@ config :rem,
   ],
   prefixes: ~W[! Rem]
 
+config :rem,
+  ecto_repos: [Rem.Repo]
+
+config :rem, Rem.Repo,
+  migration_timestamps:  [type: :utc_datetime_usec],
+  migration_primary_key: [name: :id, type: :binary_id, default: {:fragment, "uuid_generate_v4()"}]
+
 import_config "#{Mix.env()}.exs"

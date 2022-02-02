@@ -8,6 +8,7 @@ defmodule Rem.Application do
   @impl true
   def start(_type, _args) do
     children = [
+      Rem.Repo,
       Rem.Consumer
     ]
 

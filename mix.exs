@@ -31,8 +31,11 @@ defmodule Rem.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:ecto, "~> 3.7"},
+      {:ecto_sql, "~> 3.2"},
       {:gettext, ">= 0.0.0"},
-      {:nostrum, "~> 0.4"}
+      {:nostrum, "~> 0.4"},
+      {:postgrex, ">= 0.0.0"}
     ]
   end
 end
