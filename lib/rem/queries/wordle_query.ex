@@ -1,6 +1,6 @@
 defmodule Rem.Queries.WordleQuery do
   alias Rem.Repo
-  alias Rem.Models.Wordle.{Game, Word, Solution}
+  alias Schema.Wordle.{Game, Word, Solution}
 
   import Ecto.Query
 
@@ -42,7 +42,7 @@ defmodule Rem.Queries.WordleQuery do
 
   # --- CREATE --- #
 
-  @spec create_game(non_neg_integer, Rem.Wordle.Game.t) :: {:ok, Ecto.Schema.t} | {:error, Ecto.Changeset.t}
+  @spec create_game(non_neg_integer, Wordle.Game.t) :: {:ok, Ecto.Schema.t} | {:error, Ecto.Changeset.t}
   def create_game(user_id, game) do
     Game.insert_changeset(user_id, game)
     |> Repo.insert
@@ -50,7 +50,7 @@ defmodule Rem.Queries.WordleQuery do
 
   # --- UPDATE --- #
 
-  @spec update_game(non_neg_integer, Rem.Wordle.Game.t) :: {:ok, Ecto.Schema.t} | {:error, Ecto.Changeset.t}
+  @spec update_game(non_neg_integer, Wordle.Game.t) :: {:ok, Ecto.Schema.t} | {:error, Ecto.Changeset.t}
   def update_game(user_id, game) do
     fetch_game(user_id, number: game.number)
     |> Game.update_changeset(game)

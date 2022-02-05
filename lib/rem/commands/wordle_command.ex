@@ -58,7 +58,7 @@ defmodule Rem.Commands.WordleCommand do
   defp run_with_args(%{author: %{id: user_id}} = msg, ["resume"]) do
     with :ok                            <- WordleSession.can_start_session?(user_id),
          record when not is_nil(record) <- WordleQuery.fetch_game(user_id, state: :active),
-         {:ok, game}                    <- Rem.Wordle.from_record(record),
+         {:ok, game}                    <- Wordle.from_record(record),
          {:ok, _game}                   <- start_session(user_id, game)
     do
       board = game_to_board(game)
@@ -85,12 +85,12 @@ defmodule Rem.Commands.WordleCommand do
     id =
       cond do
         Regex.match?(~r/^\d{4}-\d{2}-\d{2}$/, id) ->
-          id |> Date.from_iso8601 |> Rem.Wordle.to_valid_id
+          id |> Date.from_iso8601 |> Wordle.to_valid_id
         Regex.match?(~r/^\d+$/, id) ->
           id |> String.to_integer
       end
 
-    args = %{number: Rem.Wordle.to_valid_id(id), hard: hard_mode?}
+    args = %{number: Wordle.to_valid_id(id), hard: hard_mode?}
 
     if id,
       do:   {:ok, args},
@@ -112,7 +112,7 @@ defmodule Rem.Commands.WordleCommand do
     do: {:error, :invalid_arg_format}
 
   defp default_start_args,
-    do: %{number: Rem.Wordle.to_valid_id, hard: false}
+    do: %{number: Wordle.to_valid_id, hard: false}
 
   defp send_dm(%{author: %{id: user_id}}, message) do
     with {:ok, %{id: channel_id}} <- Api.create_dm(user_id),
@@ -147,7 +147,7 @@ defmodule Rem.Commands.WordleCommand do
   end
 
   defp new_game(number) do
-    Rem.Wordle.new(number)
+    Wordle.new(number)
   end
 
   defp persist_game(user_id, game) do

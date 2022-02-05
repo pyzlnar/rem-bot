@@ -1,4 +1,4 @@
-defmodule Rem.Models.Wordle.Solution do
+defmodule Schema.Wordle.Solution do
   use Rem.Schema
 
   schema "wordle_solutions" do

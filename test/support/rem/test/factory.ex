@@ -8,13 +8,10 @@ defmodule Rem.Test.Factory do
   use ExMachina.Ecto,
     repo: Rem.Repo
 
-  alias Rem.Models
-  alias Rem.Wordle
-
   # --- Database Models --- #
 
   def wordle_game_factory do
-    %Models.Wordle.Game{
+    %Schema.Wordle.Game{
       discord_user_id: sequence(:discord_user_id, &int/1),
       number:          sequence(:number,          &int/1),
       solution:        sequence(:solution,        &int_to_word/1, start_at: 10_000),
@@ -26,14 +23,14 @@ defmodule Rem.Test.Factory do
   end
 
   def wordle_solution_factory do
-    %Models.Wordle.Solution{
+    %Schema.Wordle.Solution{
       number: sequence(:number, &int/1),
       name:   sequence(:name,   &int_to_word/1, start_at: 10_000)
     }
   end
 
   def wordle_word_factory do
-    %Models.Wordle.Word{
+    %Schema.Wordle.Word{
       name: sequence(:name, &int_to_word/1, start_at: 10_000)
     }
   end

@@ -1,4 +1,4 @@
-defmodule Rem.Wordle.Game do
+defmodule Wordle.Game do
   @attrs ~W[attempts evaluations mode number solution state]a
   defstruct @attrs
 

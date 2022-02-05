@@ -1,9 +1,8 @@
-defmodule Rem.Wordle do
+defmodule Wordle do
   @base_date Date.from_iso8601("2021-06-19") |> elem(1)
 
   alias Rem.Queries.WordleQuery
-  alias Rem.Wordle.{Game, WordValidator}
-  alias Rem.Models
+  alias Wordle.{Game, WordValidator}
 
   @spec to_valid_id(integer | Date.t) :: {:ok, non_neg_integer } | {:error, reason :: atom}
 
@@ -37,9 +36,9 @@ defmodule Rem.Wordle do
     end
   end
 
-  @spec from_record(Models.Wordle.Game.t) :: {:ok, Game.t}
+  @spec from_record(Schema.Wordle.Game.t) :: {:ok, Game.t}
 
-  def from_record(%Models.Wordle.Game{} = record) do
+  def from_record(%Schema.Wordle.Game{} = record) do
     {:ok, Game.new(record)}
   end
 

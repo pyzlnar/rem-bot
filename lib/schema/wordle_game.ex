@@ -1,4 +1,4 @@
-defmodule Rem.Models.Wordle.Game do
+defmodule Schema.Wordle.Game do
   use Rem.Schema
 
   @type t :: %__MODULE__{
@@ -38,18 +38,18 @@ defmodule Rem.Models.Wordle.Game do
     %__MODULE__{}
   end
 
-  def insert_changeset(user_id, %Rem.Wordle.Game{} = game) do
+  def insert_changeset(user_id, %Wordle.Game{} = game) do
     new()
     |> cast_from_game(game)
     |> put_change(:discord_user_id, user_id)
   end
 
-  def update_changeset(%__MODULE__{} = record, %Rem.Wordle.Game{} = game) do
+  def update_changeset(%__MODULE__{} = record, %Wordle.Game{} = game) do
     record
     |> cast_from_game(game)
   end
 
-  defp cast_from_game(%__MODULE__{} = record, %Rem.Wordle.Game{} = game) do
+  defp cast_from_game(%__MODULE__{} = record, %Wordle.Game{} = game) do
     cast(
       record,
       Map.from_struct(game),

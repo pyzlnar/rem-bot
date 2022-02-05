@@ -2,7 +2,7 @@ defmodule Rem.Queries.WordleQueryTest do
   use Rem.DataCase, async: true
 
   alias Rem.Queries.WordleQuery
-  alias Rem.Models.Wordle.Game
+  alias Schema.Wordle.Game
 
   describe "fetch_solution/1" do
     test "returns the number and solution of the specified solution'snumber if it exists" do

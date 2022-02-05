@@ -7,5 +7,5 @@ defmodule Rem.Commands.Command do
   alias Nostrum.Struct.Message
 
   # NOTE: With only one method behavior may seem like an overkill...
-  @callback run(Message.t(), binary) :: :ok | :error
+  @callback run(Message.t, String.t) :: :ok | :error
 end

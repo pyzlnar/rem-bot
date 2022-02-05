@@ -1,7 +1,7 @@
-defmodule Rem.Wordle.GameTest do
+defmodule Wordle.GameTest do
   use ExUnit.Case, async: true
 
-  alias Rem.Wordle.Game
+  alias Wordle.Game
 
   describe "new/1" do
     test "creates a new game with default attributes" do

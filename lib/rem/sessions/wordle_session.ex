@@ -22,7 +22,7 @@ defmodule Rem.Sessions.WordleSession do
   end
 
   @impl true
-  def set(user_id, %Rem.Wordle.Game{} = game) do
+  def set(user_id, %Wordle.Game{} = game) do
     with {:ok, update_fn} <- gen_update_fn(game),
          {:ok, value}     <- super(user_id, update_fn),
          do: {:ok, value.game}
@@ -52,7 +52,7 @@ defmodule Rem.Sessions.WordleSession do
   end
 
   defp play(user_id, %{channel_id: channel_id, game: game}, %{content: attempt}) do
-    with {:ok, game}     <- Rem.Wordle.play(game, attempt),
+    with {:ok, game}     <- Wordle.play(game, attempt),
          {:ok, _record}  <- WordleQuery.update_game(user_id, game),
          {:ok, _session} <- set(user_id, game)
     do

@@ -1,4 +1,4 @@
-defmodule Rem.Wordle.WordValidator do
+defmodule Wordle.WordValidator do
   alias Rem.Queries.WordleQuery
 
   @spec valid?(String.t()) :: boolean

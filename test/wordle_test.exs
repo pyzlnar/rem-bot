@@ -1,7 +1,5 @@
-defmodule Rem.WordleTest do
+defmodule WordleTest do
   use Rem.DataCase, async: true
-
-  alias Rem.Wordle
 
   describe "happy path games" do
     test "starts a game by date, plays and wins a game" do
