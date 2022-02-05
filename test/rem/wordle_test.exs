@@ -10,10 +10,13 @@ defmodule Rem.WordleTest do
 
       {:ok, date} = Date.new(2022, 01, 28)
 
-      assert {:ok, %Wordle.Game{} = game} = Wordle.new(date)
-      assert []      = game.attempts
-      assert []      = game.evaluations
-      assert :active = game.state
+      number = Wordle.to_valid_id(date)
+
+      assert {:ok, %Wordle.Game{} = game} = Wordle.new(number)
+      assert []      == game.attempts
+      assert []      == game.evaluations
+      assert :active == game.state
+      assert 223     == game.number
 
       assert {:ok, game} = Wordle.play(game, "husky")
       assert ["husky"|_]                                   = game.attempts
@@ -71,13 +74,11 @@ defmodule Rem.WordleTest do
   end
 
   describe "unhappy paths" do
-    test "returns :invalid_number when the solution for said date/number is not in the DB" do
+    test "returns :invalid_number when the solution for said number is not in the DB" do
       insert(:wordle_solution, number: 0, name: "cigar")
 
-      {:ok, date} = Date.new(2022, 01, 28)
       assert {:error, :invalid_number} = Wordle.new(1)
       assert {:error, :invalid_number} = Wordle.new(1, hard: true)
-      assert {:error, :invalid_number} = Wordle.new(date)
     end
 
     test "returns :invalid_word if the provided word is not in the correct format, or not in the DB" do

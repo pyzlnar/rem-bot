@@ -4,6 +4,15 @@ defmodule Rem.Wordle.Game do
 
   @max_attempts 6
 
+  @type t :: %__MODULE__{
+    attempts:    [String.t],
+    evaluations: [[:absent | :present | :correct]],
+    mode:        :normal | :hard,
+    number:      non_neg_integer,
+    solution:    String.t,
+    state:       :active | :win | :lose
+  }
+
   def attrs, do: @attrs
 
   def new(%{number: _, solution: _} = attrs) do

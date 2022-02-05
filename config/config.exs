@@ -14,6 +14,7 @@ config :rem,
     help
     ping
     repo
+    wordle
   ],
   prefixes: ~W[! Rem]
 

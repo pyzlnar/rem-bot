@@ -1,5 +1,5 @@
 defmodule Rem.Commands.Command do
-  @doc """
+  @moduledoc """
   A command processes a command/request done to the bot.
   All commands end in *Command for the sake of clarity.
   """

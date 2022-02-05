@@ -1,5 +1,8 @@
 import Config
 
+config :logger,
+  level: :error
+
 config :nostrum,
   token: "test_token"
 

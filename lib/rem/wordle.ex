@@ -3,12 +3,27 @@ defmodule Rem.Wordle do
 
   alias Rem.Queries.WordleQuery
   alias Rem.Wordle.{Game, WordValidator}
+  alias Rem.Models
 
-  @spec new(non_neg_integer | Date.t()) :: {:ok, Game.t()} | {:error, atom}
+  @spec to_valid_id(integer | Date.t) :: {:ok, non_neg_integer } | {:error, reason :: atom}
 
-  def new(date \\ pdt_today(), opts \\ [])
+  def to_valid_id(val \\ pdt_today())
 
-  def new(number, opts) when is_integer(number) and number >= 0 do
+  def to_valid_id(%Date{} = date) do
+    date
+    |> Date.diff(@base_date)
+    |> to_valid_id()
+  end
+
+  def to_valid_id(number) when is_integer(number) do
+    number
+    |> abs()
+    |> rem(WordleQuery.solutions_length)
+  end
+
+  @spec new(non_neg_integer, list) :: {:ok, Game.t} | {:error, atom}
+
+  def new(number, opts \\ []) when is_integer(number) and number >= 0 do
     case WordleQuery.fetch_solution(number) do
       %{number: _, solution: _} = args ->
         args =
@@ -22,13 +37,13 @@ defmodule Rem.Wordle do
     end
   end
 
-  def new(date = %Date{}, opts) do
-    date
-    |> Date.diff(@base_date)
-    |> new(opts)
+  @spec from_record(Models.Wordle.Game.t) :: {:ok, Game.t}
+
+  def from_record(%Models.Wordle.Game{} = record) do
+    {:ok, Game.new(record)}
   end
 
-  @spec play(Game.t(), String.t()) :: {:ok, Game.t()} | {:error, atom}
+  @spec play(Game.t, String.t) :: {:ok, Game.t} | {:error, atom}
 
   def play(%Game{state: :active} = game, attempt) do
     with :ok  <- valid_word?(attempt),

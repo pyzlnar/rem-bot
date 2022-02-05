@@ -9,24 +9,54 @@ defmodule Rem.Test.Factory do
     repo: Rem.Repo
 
   alias Rem.Models
+  alias Rem.Wordle
+
+  # --- Database Models --- #
+
+  def wordle_game_factory do
+    %Models.Wordle.Game{
+      discord_user_id: sequence(:discord_user_id, &int/1),
+      number:          sequence(:number,          &int/1),
+      solution:        sequence(:solution,        &int_to_word/1, start_at: 10_000),
+      mode:            :normal,
+      state:           :active,
+      attempts:        [],
+      evaluations:     []
+    }
+  end
 
   def wordle_solution_factory do
     %Models.Wordle.Solution{
-      number: sequence(:number, Enum.to_list(0..2314)),
-      name:   sequence(:name, &number_to_string/1, start_at: 10_000)
+      number: sequence(:number, &int/1),
+      name:   sequence(:name,   &int_to_word/1, start_at: 10_000)
     }
   end
 
   def wordle_word_factory do
     %Models.Wordle.Word{
-      name: sequence(:name, &number_to_string/1, start_at: 10_000)
+      name: sequence(:name, &int_to_word/1, start_at: 10_000)
+    }
+  end
+
+  # --- Virtual Models --- #
+
+  def virtual_game_factory do
+    %Wordle.Game{
+      number:          sequence(:number,   &int/1),
+      solution:        sequence(:solution, &int_to_word/1, start_at: 10_000),
+      mode:            :normal,
+      state:           :active,
+      attempts:        [],
+      evaluations:     []
     }
   end
 
   # --- Helpers --- #
 
-  defp number_to_string(number) do
-    number
+  defp int(int), do: int
+
+  defp int_to_word(int) do
+    int
     |> Integer.digits
     |> Enum.map(&(&1 + ?a))
     |> List.to_string
