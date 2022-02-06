@@ -25,8 +25,8 @@ defmodule Rem.ConsumerTest do
 
   describe "extract_command/1" do
     test "removes the command and returns the command and a string with the remaining args" do
-      assert {:ok, Rem.Commands.PingCommand, ""}           = Consumer.extract_command("ping")
-      assert {:ok, Rem.Commands.PingCommand, "other args"} = Consumer.extract_command("ping other args")
+      assert {:ok, Rem.Commands.PingCommand, []}             = Consumer.extract_command("ping")
+      assert {:ok, Rem.Commands.PingCommand, ~W[other args]} = Consumer.extract_command("ping other args")
     end
 
     test "returns {:ok, rest} for all valid commands" do

@@ -10,7 +10,7 @@ defmodule Rem.Commands.RepoCommandTest do
       Rem.Discord.Api
       |> expects(:create_message, fn 123456, "https://github.com/pyzlnar/rem-bot" -> :ok end)
 
-      assert :ok = RepoCommand.run(%{channel_id: 123456}, "")
+      assert :ok = RepoCommand.run(%{channel_id: 123456}, [])
     end
   end
 end

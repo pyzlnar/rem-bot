@@ -1,4 +1,18 @@
 defmodule Rem.Session do
+  @moduledoc """
+  A session helps Rem maintain a "conversation" with an user, by caching data in a state.
+
+  Both the session_id and the state can be anything you need, although using the user_id as a
+  session_id is recomended.
+
+  When you use the module, most functions are ready to be used, though you probably will need to
+  override new/2 as you need to send a handler in the options.
+
+  When a session exists, a Handler is the module that will be called by the consumer to handle the
+  conversation. This module is expected to implement the `Rem.Command.SessionHandler` behvaiour.
+  See `Rem.Command` for more details.
+  """
+
   defmacro __using__(_opts) do
     quote do
       @behaviour unquote(__MODULE__)
@@ -18,7 +32,8 @@ defmodule Rem.Session do
 
       @impl true
       def new(session_id, opts) do
-        Server.new(session_id, Keyword.merge(opts, handler: __MODULE__))
+        opts = Keyword.merge([handler: Rem.Commands.NoopCommand], opts)
+        Server.new(session_id, opts)
       end
 
       @impl true
@@ -36,11 +51,6 @@ defmodule Rem.Session do
         Server.kill(session_id)
       end
 
-      @impl true
-      def process(_message) do
-        :noop
-      end
-
       defoverridable unquote(__MODULE__)
     end
   end
@@ -56,7 +66,6 @@ defmodule Rem.Session do
   @callback get(session_id)                :: {:ok, session_value} | {:error, :no_session | reason}
   @callback set(session_id, term)          :: {:ok, session_value} | {:error, :no_session | reason}
   @callback kill(session_id)               :: :ok
-  @callback process(message)               :: :ok | :noop
 
   alias Rem.Sessions.Server
 

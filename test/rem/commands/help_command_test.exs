@@ -11,7 +11,7 @@ defmodule Rem.Commands.HelpCommandTest do
       Rem.Discord.Api
       |> expects(:create_message, &message_contains_commands?/2)
 
-      assert :ok = HelpCommand.run(%{channel_id: 123456}, "")
+      assert :ok = HelpCommand.run(%{channel_id: 123456}, [])
     end
   end
 

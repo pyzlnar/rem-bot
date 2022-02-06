@@ -18,10 +18,10 @@ defmodule Rem.Consumer do
   # --- Helpers --- #
 
   defp maybe_run_command(%{content: content} = message) do
-    with {:ok, rest}          <- extract_prefix(content),
-         {:ok, cmd, args_str} <- extract_command(rest)
+    with {:ok, rest}      <- extract_prefix(content),
+         {:ok, cmd, args} <- extract_command(rest)
     do
-      cmd.run(message, args_str)
+      cmd.run(message, args)
       :ok
     else
       _ -> :noop
@@ -29,10 +29,20 @@ defmodule Rem.Consumer do
   end
 
   defp maybe_respond_session(%{author: %{id: user_id}} = message) do
-    with {:ok, handler} <- Rem.Session.get_handler(user_id) do
-      handler.process(message)
+    with {:ok, handler} <- Rem.Session.get_handler(user_id),
+         {:ok, state}   <- handler.should_run?(message)
+    do
+      handler.run(message, state)
+      :ok
     else
       _ -> :noop
     end
+  end
+
+  defp parse_args(args_str) do
+    args_str
+    |> String.trim
+    |> String.split(~r/\s+/)
+    |> Enum.reject(&(&1 == ""))
   end
 end

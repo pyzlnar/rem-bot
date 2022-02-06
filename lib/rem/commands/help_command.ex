@@ -1,11 +1,11 @@
 defmodule Rem.Commands.HelpCommand do
-  @behaviour Rem.Commands.Command
+  use Rem.Command, type: :prefix
 
   import Rem.I18n
   alias Rem.Discord.Api
 
   @impl true
-  def run(%{channel_id: channel_id}, _args_str),
+  def run(%{channel_id: channel_id}, _args),
     do: Api.create_message(channel_id, generate_help_message())
 
   defp generate_help_message do
