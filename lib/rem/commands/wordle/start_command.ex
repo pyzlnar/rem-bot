@@ -7,9 +7,6 @@ defmodule Rem.Commands.Wordle.StartCommand do
   alias Rem.Queries.WordleQuery
   alias Rem.Sessions.WordleSession
 
-  require Logger
-
-  # TODO errors to message
   # TODO better board
   # TODO board prints remaining letters
 
@@ -17,30 +14,17 @@ defmodule Rem.Commands.Wordle.StartCommand do
   def run(%{author: %{id: user_id}} = msg, args) do
     with {:ok, args}    <- parse_args(args),
          :ok            <- can_start_game?(user_id, args.number),
-         {:ok, game}    <- Wordle.new(args.number),
+         {:ok, game}    <- Wordle.new(args.number, hard: args.hard),
          {:ok, _record} <- WordleQuery.create_game(user_id, game),
-         {:ok, _game}   <- WordleSession.new(user_id, game)
+         {:ok, _pid}    <- WordleSession.new(user_id, game)
     do
       opts = game_to_message_opts(game)
-      send_dm(msg, gettext("wordle:board", opts))
+      send_dm(msg, dgettext("wordle", "board", opts))
+      :ok
     else
-      {:error, :invalid_arg_format} ->
-        # TODO Print help message
-        send_dm(msg, "Invalid command arguments")
-        # run_with_args(msg, ["help"])
-
-      {:error, :session_already_exists} ->
-        send_dm(msg, "You are already playing a game!")
-
-      {:error, :has_unfinished_game} ->
-        send_dm(msg, "It seems you have an unfinished game!\nIf you'd like to resume the game use the command:\n!wordle resume")
-
-      {:error, {:has_played_game, number}} ->
-        send_dm(msg, "You have already played this game! (Wordle #{number})")
-
       error ->
-        Logger.warn("[#{__MODULE__} #{inspect error}")
-        send_dm(msg, "Something went wrong :(")
+        handle_error(msg, error)
+        error
     end
   end
 
@@ -51,7 +35,7 @@ defmodule Rem.Commands.Wordle.StartCommand do
     id =
       cond do
         Regex.match?(~r/^\d{4}-\d{2}-\d{2}$/, id) ->
-          id |> Date.from_iso8601
+          id |> Date.from_iso8601 |> elem(1)
         Regex.match?(~r/^\d+$/, id) ->
           id |> String.to_integer
       end
@@ -104,5 +88,28 @@ defmodule Rem.Commands.Wordle.StartCommand do
     if WordleQuery.game_exists?(user_id, number: number),
       do:   {:error, {:has_played_game, number}},
       else: :ok
+  end
+
+  defp handle_error(msg, {:error, :invalid_arg_format}) do
+    header  = dgettext("wordle", "error:invalid_arg_format")
+    content = dgettext("wordle", "help", prefix: get_command_prefix())
+    message = dgettext("wordle", "with_header", header: header, content: content)
+    send_dm(msg, message)
+  end
+
+  defp handle_error(msg, {:error, :session_already_exists}) do
+    send_dm(msg, dgettext("wordle", "error:session_already_exists"))
+  end
+
+  defp handle_error(msg, {:error, :has_unfinished_game}) do
+    send_dm(msg, dgettext("wordle", "error:has_unfinished_game", prefix: get_command_prefix()))
+  end
+
+  defp handle_error(msg, {:error, {:has_played_game, number}}) do
+    send_dm(msg, dgettext("wordle", "error:has_played_game", number: number))
+  end
+
+  defp handle_error(msg, error) do
+    handle_unknown_error(__MODULE__, msg, error)
   end
 end

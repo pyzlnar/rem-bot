@@ -3,6 +3,18 @@ defmodule Rem.Sessions.ServerTest do
 
   alias Rem.Sessions.Server
 
+  describe "registry/0" do
+    test "returns the module acting as registry for the server" do
+      assert is_atom(Server.registry)
+    end
+  end
+
+  describe "supervisor/0" do
+    test "returns the module acting as supervisor for the server" do
+      assert is_atom(Server.supervisor)
+    end
+  end
+
   describe "new/1" do
     test "starts a new session" do
       on_timeout = fn -> :on_timeout_fn end
@@ -79,6 +91,18 @@ defmodule Rem.Sessions.ServerTest do
       Process.exit(pid, :kill)
     end
 
+    test "returns {:ok, new_value} setting the value when receiving an arity 1 function" do
+      session_id = make_ref()
+      {:ok, pid} = Server.new(session_id, value: 1)
+
+      assert {:ok, 2} == Server.set(session_id, &(&1 + 1))
+
+      state = :sys.get_state(pid)
+      assert state.value == 2
+
+      Process.exit(pid, :kill)
+    end
+
     test "returns an error if session does not exist" do
       assert {:error, :no_session} = Server.set(make_ref(), :new_value)
     end
@@ -92,7 +116,7 @@ defmodule Rem.Sessions.ServerTest do
       assert :ok = Server.kill(session_id)
 
       # 10ms is typically enough for the process to shutdown
-      Process.sleep(10)
+      Process.sleep(20)
       refute Process.alive?(pid)
     end
 
@@ -113,11 +137,11 @@ defmodule Rem.Sessions.ServerTest do
 
     test "is able to handle errors in the on_timeout function" do
       on_timeout = fn -> raise "Onoz" end
-      {:ok, pid} = Server.new(make_ref(), on_timeout: on_timeout, timeout: 0)
+      assert {:ok, _pid} = Server.new(make_ref(), on_timeout: on_timeout, timeout: 0)
+    end
 
-      # 10ms is typically enough for the process to shutdown
-      Process.sleep(10)
-      refute Process.alive?(pid)
+    test "can timeout with the default function being run" do
+      assert {:ok, _pid} = Server.new(make_ref(), timeout: 0)
     end
   end
 end

@@ -13,8 +13,6 @@ defmodule Wordle.Game do
     state:       :active | :win | :lose
   }
 
-  def attrs, do: @attrs
-
   def new(%{number: _, solution: _} = attrs) do
     attrs = Map.take(attrs, @attrs)
     %__MODULE__{

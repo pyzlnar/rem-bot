@@ -10,7 +10,9 @@ defmodule Rem.MixProject do
       aliases:         aliases(),
       compilers:       compilers(),
       deps:            deps(),
-      start_permanent: Mix.env == :prod
+      start_permanent: Mix.env == :prod,
+      test_coverage:   coverage(),
+      xref:            xref_excludes(Mix.env)
     ]
   end
 
@@ -52,9 +54,23 @@ defmodule Rem.MixProject do
   # Add gettext to compilers so it recompiles when locale files change
   defp compilers, do: [:gettext] ++ Mix.compilers()
 
+  defp coverage do
+    [
+      ignore_modules: [
+        Rem.DataCase,
+        ~r/^Rem\.Test/,
+        ~r/^Injector/,
+      ]
+    ]
+  end
+
   # Load extra paths when on test
   defp elixirc_paths(:test),   do: ~W[lib test/support]
   defp elixirc_paths(_normal), do: ~W[lib]
+
+  # Removes warnings for Nostrum not being started in test
+  defp xref_excludes(:test), do: [exclude: Nostrum.Consumer]
+  defp xref_excludes(_),     do: nil
 
   # Run "mix help deps" to learn about dependencies.
   defp deps do

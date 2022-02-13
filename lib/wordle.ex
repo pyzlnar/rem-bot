@@ -32,7 +32,7 @@ defmodule Wordle do
 
         {:ok, Game.new(args)}
       _ ->
-        {:error, :invalid_number}
+        {:error, {:invalid_number, number}}
     end
   end
 
@@ -51,7 +51,9 @@ defmodule Wordle do
     do
       {:ok, game}
     else
-      {:error, status} = error when is_atom(status)->
+      {:error, status} = error when is_atom(status) ->
+        error
+      {:error, {status, _info}} = error when is_atom(status) ->
         error
       _ ->
         {:error, :unknown_error}
@@ -76,13 +78,13 @@ defmodule Wordle do
   defp valid_word?(word) do
     if WordValidator.valid?(word),
       do:   :ok,
-      else: {:error, :invalid_word}
+      else: {:error, {:invalid_word, word}}
   end
 
   defp valid_attempt?(%Game{mode: :hard} = game, attempt) do
     if Game.uses_previous_hints?(game, attempt),
       do:   :ok,
-      else: {:error, :invalid_attempt}
+      else: {:error, {:invalid_attempt, attempt}}
   end
 
   defp valid_attempt?(_game, _attempt),

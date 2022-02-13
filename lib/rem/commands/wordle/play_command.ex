@@ -8,8 +8,6 @@ defmodule Rem.Commands.Wordle.PlayCommand do
   import Rem.I18n
   import Rem.Commands.Utils
 
-  require Logger
-
   @impl true
   def should_run?(%{author: %{id: user_id}, channel_id: channel_id}) do
     with {:ok, state} <- WordleSession.get(user_id),
@@ -28,32 +26,50 @@ defmodule Rem.Commands.Wordle.PlayCommand do
          {:ok, _session} <- WordleSession.set(user_id, game)
     do
       handle_played(user_id, channel_id, game)
+      :ok
     else
-      {:error, :invalid_word} ->
-        Api.create_message(channel_id, "'#{attempt}' is not in the word list.")
       error ->
-        Logger.warn("[#{__MODULE__} #{inspect error}")
+        handle_error(channel_id, error)
+        error
     end
   end
 
   defp handle_played(_user_id, channel_id, %{state: :active} = game) do
     opts = game_to_message_opts(game)
-    Api.create_message(channel_id, gettext("wordle:board", opts))
+    Api.create_message(channel_id, dgettext("wordle", "board", opts))
   end
 
   defp handle_played(user_id, channel_id, %{state: :win} = game) do
     WordleSession.kill(user_id)
 
-    opts = game_to_message_opts(game)
-    Api.create_message(channel_id, gettext("wordle:board", opts))
-    Api.create_message(channel_id, "You win!")
+    opts    = game_to_message_opts(game)
+    header  = dgettext("wordle", "board:win")
+    content = dgettext("wordle", "board", opts)
+    message = dgettext("wordle", "with_header", header: header, content: content)
+
+    Api.create_message(channel_id, message)
   end
 
   defp handle_played(user_id, channel_id, %{state: :lose} = game) do
     WordleSession.kill(user_id)
 
-    opts = game_to_message_opts(game)
-    Api.create_message(channel_id, gettext("wordle:board", opts))
-    Api.create_message(channel_id, "Better luck next time.")
+    opts    = game_to_message_opts(game)
+    header  = dgettext("wordle", "board:lose")
+    content = dgettext("wordle", "board", opts)
+    message = dgettext("wordle", "with_header", header: header, content: content)
+
+    Api.create_message(channel_id, message)
+  end
+
+  defp handle_error(channel_id, {:error, {:invalid_word, attempt}}) do
+    Api.create_message(channel_id, dgettext("wordle", "error:invalid_word", attempt: attempt))
+  end
+
+  defp handle_error(channel_id, {:error, {:invalid_attempt, attempt}}) do
+    Api.create_message(channel_id, dgettext("wordle", "error:invalid_attempt", attempt: attempt))
+  end
+
+  defp handle_error(channel_id, error) do
+    handle_unknown_error(__MODULE__, channel_id, error)
   end
 end

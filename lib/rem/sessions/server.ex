@@ -4,6 +4,9 @@ defmodule Rem.Sessions.Server do
   These sessions expire after a bit of inactivity, and can run a function after they close.
   """
 
+  @registry    Rem.Session.Registry
+  @supervisor  Rem.Session.DynamicSupervisor
+
   require Logger
   use GenServer
   import GenServer, only: [call: 2, cast: 2]
@@ -24,11 +27,17 @@ defmodule Rem.Sessions.Server do
     GenServer.start_link(__MODULE__, opts, name: via(session_id))
   end
 
+  def registry,
+    do: @registry
+
+  def supervisor,
+    do: @supervisor
+
   # -- API --- #
 
   def new(session_id, opts \\ []) do
     DynamicSupervisor.start_child(
-      Rem.Session.DynamicSupervisor,
+      @supervisor,
       {__MODULE__, {session_id, opts}}
     )
   end
@@ -69,7 +78,7 @@ defmodule Rem.Sessions.Server do
   end
 
   def has_session?(session_id) do
-    with [{pid, _}] <- Registry.lookup(Rem.Session.Registry, session_id),
+    with [{pid, _}] <- Registry.lookup(@registry, session_id),
          true       <- Process.alive?(pid),
          do:   :ok,
          else: (_ -> {:error, :no_session})
@@ -79,7 +88,7 @@ defmodule Rem.Sessions.Server do
     {
       :via,
       Registry,
-      {Rem.Session.Registry, session_id}
+      {@registry, session_id}
     }
   end
 

@@ -26,6 +26,13 @@ defmodule Rem.Queries.WordleQueryTest do
       result = WordleQuery.fetch_game(1234, number: 1, state: :win)
       assert is_nil(result)
     end
+
+    test "raises an error if multiple records are found" do
+      insert(:wordle_game, discord_user_id: 1234, number: 0, solution: "cigar", state: :active)
+      insert(:wordle_game, discord_user_id: 1234, number: 1, solution: "rebut", state: :active)
+
+      assert_raise Ecto.MultipleResultsError, fn -> WordleQuery.fetch_game(1234) end
+    end
   end
 
   describe "word_exists?/1" do
@@ -41,6 +48,7 @@ defmodule Rem.Queries.WordleQueryTest do
     test "returns whether the game exists applying the different options" do
       insert(:wordle_game, discord_user_id: 1234, number: 1, solution: "rebut", state: :active)
 
+      assert WordleQuery.game_exists?(1234)
       assert WordleQuery.game_exists?(1234, number: 1)
       refute WordleQuery.game_exists?(1234, number: 1, state: :win)
     end

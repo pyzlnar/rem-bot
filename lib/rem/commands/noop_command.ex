@@ -6,6 +6,6 @@ defmodule Rem.Commands.NoopCommand do
     do: :noop
 
   @impl true
-  def run(_msg, _state),
+  def run(_message, _state),
     do: :ok
 end

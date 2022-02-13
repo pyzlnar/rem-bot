@@ -5,8 +5,10 @@ defmodule Rem.Commands.HelpCommand do
   alias Rem.Discord.Api
 
   @impl true
-  def run(%{channel_id: channel_id}, _args),
-    do: Api.create_message(channel_id, generate_help_message())
+  def run(%{channel_id: channel_id}, _args) do
+    with {:ok, _} <- Api.create_message(channel_id, generate_help_message()),
+         do: :ok
+  end
 
   defp generate_help_message do
     prefixes = Application.get_env(:rem, :prefixes, ["<prefix>"])

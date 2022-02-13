@@ -6,8 +6,7 @@ defmodule Rem.Commands.Wordle.HelpCommand do
 
   @impl true
   def run(message, _args) do
-    prefix = Application.get_env(:rem, :prefixes, ["<prefix>"]) |> hd
-
-    send_dm(message, gettext("wordle:help", prefix: prefix))
+    header = dgettext("wordle", "help:default_header")
+    send_dm(message, dgettext("wordle", "help", header: header, prefix: get_command_prefix()))
   end
 end

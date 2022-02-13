@@ -75,8 +75,8 @@ defmodule WordleTest do
     test "returns :invalid_number when the solution for said number is not in the DB" do
       insert(:wordle_solution, number: 0, name: "cigar")
 
-      assert {:error, :invalid_number} = Wordle.new(1)
-      assert {:error, :invalid_number} = Wordle.new(1, hard: true)
+      assert {:error, {:invalid_number, 1}} = Wordle.new(1)
+      assert {:error, {:invalid_number, 1}} = Wordle.new(1, hard: true)
     end
 
     test "returns :invalid_word if the provided word is not in the correct format, or not in the DB" do
@@ -89,11 +89,11 @@ defmodule WordleTest do
       insert_wordle_words(invalid_words)
 
       for word <- invalid_words do
-        assert {:error, :invalid_word} = Wordle.play(game, word)
+        assert {:error, {:invalid_word, ^word}} = Wordle.play(game, word)
       end
 
       # Correct format but not in DB
-      assert {:error, :invalid_word} = Wordle.play(game, "abcde")
+      assert {:error, {:invalid_word, "abcde"}} = Wordle.play(game, "abcde")
     end
 
     test "returns :invalid_attempt for hard mode game when the attempt doesn't use all previous hints" do
@@ -106,7 +106,7 @@ defmodule WordleTest do
 
       {:ok, game} = Wordle.new(0, hard: true)
       {:ok, game} = Wordle.play(game, "trope")
-      assert {:error, :invalid_attempt} = Wordle.play(game, "blast")
+      assert {:error, {:invalid_attempt, "blast"}} = Wordle.play(game, "blast")
     end
 
     test "returnes :game_already_over when trying to play in a game that is already finished" do
@@ -116,6 +116,26 @@ defmodule WordleTest do
       {:ok, game} = Wordle.new(0)
       {:ok, game} = Wordle.play(game, "cigar")
       assert {:error, :game_already_over} = Wordle.play(game, "blast")
+    end
+  end
+
+  describe "to_valid_id/0" do
+    test "returns a valid id for today's date" do
+      result = Wordle.to_valid_id
+      assert is_integer(result)
+    end
+  end
+
+  describe "from_record/1" do
+    test "is able to build a game from a DB record" do
+      record = build(:wordle_game)
+
+      assert {:ok, game} = Wordle.from_record(record)
+      assert game.number   == record.number
+      assert game.solution == record.solution
+      assert game.mode     == record.mode
+      assert game.solution == record.solution
+      assert game.attempts == record.attempts
     end
   end
 end

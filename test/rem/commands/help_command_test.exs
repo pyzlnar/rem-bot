@@ -29,6 +29,6 @@ defmodule Rem.Commands.HelpCommandTest do
       assert message =~ ~r/^#{prefixes}#{command}/m
     end)
 
-    :ok
+    {:ok, :whatever}
   end
 end
