@@ -7,7 +7,10 @@ defmodule Rem.Discord.Api do
   module = Nostrum.Api
 
   for {name, arity} <- module.__info__(:functions) do
-    args = 1..arity |> Enum.map(& Macro.var(:"arg#{&1}", __MODULE__))
+    args =
+      if arity > 0,
+        do:   Enum.map(1..arity, &(Macro.var(:"arg#{&1}", __MODULE__))),
+        else: []
 
     if Application.get_env(:rem, __MODULE__)[:inject] do
       def unquote(name)(unquote_splicing(args)) do

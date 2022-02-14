@@ -25,7 +25,7 @@ defmodule Rem.Consumer.Meta do
 
   def generate_extract_command do
     quote do
-      @spec extract_command(binary) :: {:ok, binary, list} |  :error
+      @spec extract_command(String.t) :: {:ok, String.t, list} |  :error
       unquote(generate_extract_command_from_config())
 
       def extract_command(_), do: :error
@@ -39,7 +39,7 @@ defmodule Rem.Consumer.Meta do
 
       quote do
         def extract_command(unquote(command) <> args),
-          do: {:ok, unquote(command_alias), String.trim(args)}
+          do: {:ok, unquote(command_alias), parse_args(args)}
       end
     end
   end

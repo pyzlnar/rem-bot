@@ -10,7 +10,7 @@ defmodule Rem.Commands.PingCommandTest do
       Rem.Discord.Api
       |> expects(:create_message, fn 123456, "Still alive!" -> :ok end)
 
-      assert :ok = PingCommand.run(%{channel_id: 123456}, "")
+      assert :ok = PingCommand.run(%{channel_id: 123456}, [])
     end
   end
 end
