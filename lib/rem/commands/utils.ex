@@ -37,32 +37,6 @@ defmodule Rem.Commands.Utils do
   end
 
   def game_to_message_opts(game) do
-    board = game_to_board(game)
-    nrow  = length(game.attempts)
-
-    board =
-      if nrow < 6,
-        do: "#{board}\n _  _  _  _  _ ",
-        else: board
-
-    [board: board, attempt: nrow, number: game.number]
-  end
-
-  # TODO: This can be prettier...
-  defp game_to_board(game) do
-    Stream.zip(game.attempts, game.evaluations)
-    |> Stream.map(fn {attempt, evaluation} ->
-      attempt
-      |> String.graphemes
-      |> Enum.zip(evaluation)
-      |> Enum.map(fn
-        {char, :absent}  -> "-#{char}-"
-        {char, :present} -> "~#{char}~"
-        {char, :correct} -> "[#{char}]"
-      end)
-      |> Enum.join(" ")
-    end)
-    |> Enum.reverse
-    |> Enum.join("\n")
+    Wordle.Pretty.board_with_info(game)
   end
 end

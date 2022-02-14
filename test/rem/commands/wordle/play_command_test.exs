@@ -160,7 +160,7 @@ defmodule Rem.Commands.Wordle.PlayCommandTest do
 
       Rem.Discord.Api
       |> expects(:create_message, fn ^channel_id, message ->
-        assert message =~ ~r/'#{attempt}' is not in the word list/
+        assert message =~ ~r/`#{attempt}` is not in the word list/
       end)
 
       assert {:error, {:invalid_word, "fried"}} = PlayCommand.run(message, %{game: game})
