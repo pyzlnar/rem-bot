@@ -45,7 +45,8 @@ defmodule Wordle do
   @spec play(Game.t, String.t) :: {:ok, Game.t} | {:error, atom}
 
   def play(%Game{state: :active} = game, attempt) do
-    with :ok  <- valid_word?(attempt),
+    with attempt = String.downcase(attempt),
+         :ok  <- valid_word?(attempt),
          :ok  <- valid_attempt?(game, attempt),
          game <- update_game(game, attempt)
     do
