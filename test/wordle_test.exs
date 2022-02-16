@@ -119,6 +119,18 @@ defmodule WordleTest do
     end
   end
 
+  describe "play/2" do
+    test "doesn't fuzz about capital letters" do
+      insert(:wordle_word, name: "panic")
+
+      game = Wordle.Game.new(%{solution: "memes", number: 1337})
+
+      {:ok, game} = Wordle.play(game, "PANIC")
+
+      assert ["panic" | _] = game.attempts
+    end
+  end
+
   describe "to_valid_id/0" do
     test "returns a valid id for today's date" do
       result = Wordle.to_valid_id
