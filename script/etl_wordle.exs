@@ -120,7 +120,7 @@ defmodule Etl do
   end
 
   defp sql_run_command(command) do
-    :os.cmd('#{sql_with_config()} #{command}')
+    :os.cmd('#{sql_with_config()} -c "#{command}"')
   end
 
   defp sql_run_file(file) do
