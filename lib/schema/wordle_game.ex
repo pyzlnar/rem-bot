@@ -23,13 +23,13 @@ defmodule Schema.Wordle.Game do
   schema "wordle_games" do
     field :discord_user_id, :integer
 
-    field :number,   :integer,  null: false
-    field :solution, :string,   null: false
+    field :number,   :integer
+    field :solution, :string
     field :mode,     Ecto.Enum, default: :normal, values: ~W[normal hard]a
     field :state,    Ecto.Enum, default: :active, values: ~W[active win lose]a
 
-    field :attempts,    {:array, :string},             null: false
-    field :evaluations, {:array, {:array, Ecto.Enum}}, null: false, values: ~W[absent present correct]a
+    field :attempts,    {:array, :string}
+    field :evaluations, {:array, {:array, Ecto.Enum}}, values: ~W[absent present correct]a
 
     timestamps()
   end
