@@ -29,9 +29,9 @@ You can verify the installation by running: \
 
 ```bash
 $ iex
-Erlang/OTP 24 [erts-12.1.5] [source] [64-bit] [smp:10:10] [ds:10:10:10] [async-threads:1]
+Erlang/OTP 25 [erts-13.1.2] [source] [64-bit] [smp:10:10] [ds:10:10:10] [async-threads:1]
 
-Interactive Elixir (1.13.2) - press Ctrl+C to exit (type h() ENTER for help)
+Interactive Elixir (1.14.2) - press Ctrl+C to exit (type h() ENTER for help)
 iex(1)>
 ```
 

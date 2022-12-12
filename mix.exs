@@ -79,10 +79,10 @@ defmodule Rem.MixProject do
 
   defp deps(:normal) do
     [
-      {:ecto,     "~> 3.7"},
-      {:ecto_sql, "~> 3.2"},
+      {:ecto,     "~> 3.9"},
+      {:ecto_sql, "~> 3.9"},
       {:gettext,  ">= 0.0.0"},
-      {:nostrum,  "~> 0.4"},
+      {:nostrum,  "~> 0.6"},
       {:postgrex, ">= 0.0.0"}
     ]
   end
