@@ -1,28 +1,34 @@
 defmodule Wordle do
+  alias Rem.Queries.WordleQuery
+  alias Wordle.{Game, Validator}
+
   @base_date Date.from_iso8601("2021-06-19") |> elem(1)
 
-  alias Rem.Queries.WordleQuery
-  alias Wordle.{Game, WordValidator}
+  @type wordle_id :: non_neg_integer
 
-  @spec to_valid_id(integer | Date.t) :: {:ok, non_neg_integer } | {:error, reason :: atom}
+  defguard is_wordle_id?(id) when is_integer(id) and id >= 0
 
-  def to_valid_id(val \\ pdt_today())
+  @spec date_to_id(Date.t) :: wordle_id
 
-  def to_valid_id(%Date{} = date) do
-    date
-    |> Date.diff(@base_date)
-    |> to_valid_id()
+  def date_to_id(date) do
+    Date.diff(date, @base_date)
   end
 
-  def to_valid_id(number) when is_integer(number) do
-    number
-    |> abs()
-    |> rem(WordleQuery.solutions_length)
+  @spec id_to_date(wordle_id) :: Date.t
+
+  def id_to_date(id) when is_wordle_id?(id) do
+    Date.add(@base_date, id)
+  end
+
+  @spec default_id() :: wordle_id
+
+  def default_id do
+    date_to_id(pdt_today())
   end
 
   @spec new(non_neg_integer, list) :: {:ok, Game.t} | {:error, atom}
 
-  def new(number, opts \\ []) when is_integer(number) and number >= 0 do
+  def new(number, opts \\ []) when is_wordle_id?(number) do
     case WordleQuery.fetch_solution(number) do
       %{number: _, solution: _} = args ->
         args =
@@ -46,9 +52,9 @@ defmodule Wordle do
 
   def play(%Game{state: :active} = game, attempt) do
     with attempt = String.downcase(attempt),
-         :ok  <- valid_word?(attempt),
-         :ok  <- valid_attempt?(game, attempt),
-         game <- update_game(game, attempt)
+         :ok  <- Validator.valid_word?(attempt),
+         :ok  <- Validator.valid_attempt?(game, attempt),
+         game <- Game.play(game, attempt)
     do
       {:ok, game}
     else
@@ -74,24 +80,5 @@ defmodule Wordle do
     DateTime.utc_now
     |> DateTime.add(-7 * 3600, :second)
     |> DateTime.to_date
-  end
-
-  defp valid_word?(word) do
-    if WordValidator.valid?(word),
-      do:   :ok,
-      else: {:error, {:invalid_word, word}}
-  end
-
-  defp valid_attempt?(%Game{mode: :hard} = game, attempt) do
-    if Game.uses_previous_hints?(game, attempt),
-      do:   :ok,
-      else: {:error, {:invalid_attempt, attempt}}
-  end
-
-  defp valid_attempt?(_game, _attempt),
-    do: :ok
-
-  defp update_game(game, attempt) do
-    Game.play(game, attempt)
   end
 end

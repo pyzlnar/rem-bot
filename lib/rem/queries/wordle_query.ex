@@ -35,9 +35,9 @@ defmodule Rem.Queries.WordleQuery do
     |> Repo.exists?
   end
 
-  @spec solutions_length() :: pos_integer
-  def solutions_length do
-    1 + (Repo.one(from s in Solution, select: max(s.number)) || 0)
+  @spec last_saved_solution() :: pos_integer
+  def last_saved_solution do
+    (Repo.one(from s in Solution, select: max(s.number)) || 0)
   end
 
   # --- CREATE --- #

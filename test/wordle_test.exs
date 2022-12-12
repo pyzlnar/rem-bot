@@ -8,7 +8,7 @@ defmodule WordleTest do
 
       {:ok, date} = Date.new(2022, 01, 28)
 
-      number = Wordle.to_valid_id(date)
+      number = Wordle.date_to_id(date)
 
       assert {:ok, %Wordle.Game{} = game} = Wordle.new(number)
       assert []      == game.attempts
@@ -131,13 +131,6 @@ defmodule WordleTest do
     end
   end
 
-  describe "to_valid_id/0" do
-    test "returns a valid id for today's date" do
-      result = Wordle.to_valid_id
-      assert is_integer(result)
-    end
-  end
-
   describe "from_record/1" do
     test "is able to build a game from a DB record" do
       record = build(:wordle_game)
@@ -148,6 +141,20 @@ defmodule WordleTest do
       assert game.mode     == record.mode
       assert game.solution == record.solution
       assert game.attempts == record.attempts
+    end
+  end
+
+  describe "date_to_id/1" do
+    test "transforms a date to a wordle id" do
+      {:ok, date} = Date.new(2022, 01, 05)
+      assert 200 == Wordle.date_to_id(date)
+    end
+  end
+
+  describe "id_to_date/1" do
+    test "transforms a wordle id into a date" do
+      {:ok, date} = Date.new(2022, 01, 05)
+      assert date == Wordle.id_to_date(200)
     end
   end
 end

@@ -54,16 +54,15 @@ defmodule Rem.Queries.WordleQueryTest do
     end
   end
 
-  describe "solutions_length/0" do
-    test "returns the number of inserted solutions" do
-      # We actually cheat and get the max number instead cuz it's way faster
+  describe "last_saved_solution/0" do
+    test "returns the number of the last inserted solution" do
       insert(:wordle_solution, number: 2314, name: "shave")
 
-      assert 2315 == WordleQuery.solutions_length
+      assert 2314 == WordleQuery.last_saved_solution
     end
 
-    test "returns 1 if there are no solutions in the database" do
-      assert 1 == WordleQuery.solutions_length
+    test "returns 0 if there are no solutions in the database" do
+      assert 0 == WordleQuery.last_saved_solution
     end
   end
 
