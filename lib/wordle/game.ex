@@ -36,19 +36,55 @@ defmodule Wordle.Game do
   end
 
   def evaluate_attempt(%__MODULE__{solution: solution}, attempt) do
+    frequencies = get_frequencies(solution, attempt)
     attempt
     |> String.graphemes
     |> Stream.with_index
-    |> Enum.map(fn {char, index} ->
+    |> Stream.map(fn {char, index} ->
       cond do
         String.at(solution, index) == char ->
-          :correct
+          {char, :correct}
         String.contains?(solution, char) ->
-          :present
+          {char, :present}
         true ->
-          :absent
+          {char, :absent}
       end
     end)
+    |> Enum.reverse()
+    |> Enum.reduce({[], frequencies}, fn
+      {char, :present}, {acc, frequencies} ->
+        eval = if frequencies[char] > 0, do: :absent, else: :present
+        {[eval|acc], substract_frequency(frequencies, char)}
+
+      {_char, evaluation}, {acc, frequencies} ->
+        {[evaluation|acc], frequencies}
+    end)
+    |> elem(0)
+  end
+
+  defp get_frequencies(solution, attempt) do
+    solution_frequencies = calculate_frequencies(solution)
+    attempt_frequencies = calculate_frequencies(attempt)
+
+    Map.new(attempt_frequencies, fn {char, a_freq} ->
+      s_freq = Map.get(solution_frequencies, char, 0)
+      extra = a_freq - s_freq
+      {char, extra}
+    end)
+  end
+
+  defp calculate_frequencies(word) do
+    word
+    |> String.graphemes
+    |> Enum.frequencies
+  end
+
+  defp substract_frequency(frequencies, char) do
+    if (current = Map.get(frequencies, char)) do
+      %{frequencies | char => current - 1 }
+    else
+      frequencies
+    end
   end
 
   def update_state(%__MODULE__{} = game) do

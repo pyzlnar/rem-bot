@@ -65,6 +65,18 @@ defmodule Wordle.GameTest do
       assert ~W[present present present present present]a == Game.evaluate_attempt(game, "sotac")
       assert ~W[absent  absent  present absent  correct]a == Game.evaluate_attempt(game, "grams")
     end
+
+    test "returns an arrays with evaluation for solutions with repeated letters" do
+      game = %Game{solution: "other"}
+
+      assert ~W[correct correct absent  correct correct]a == Game.evaluate_attempt(game, "otter")
+      assert ~W[present absent  present present absent ]a == Game.evaluate_attempt(game, "tarot")
+      assert ~W[absent  absent  present correct correct]a == Game.evaluate_attempt(game, "meter")
+
+      game = %Game{solution: "vivid"}
+      assert ~W[present present present absent  absent ]a == Game.evaluate_attempt(game, "idiot")
+      assert ~W[correct absent  absent  present absent ]a == Game.evaluate_attempt(game, "valve")
+    end
   end
 
   describe "uses_previous_hints/2" do
