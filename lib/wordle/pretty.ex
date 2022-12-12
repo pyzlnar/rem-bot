@@ -12,6 +12,10 @@ defmodule Wordle.Pretty do
 
   def board_with_info(%Game{} = game) do
     nrow = length(game.attempts)
+    nattempt =
+      if nrow == 6 && game.state == :lose,
+        do:   "X",
+        else: nrow
 
     plays  = game_to_board(game)
     blanks = get_blanks(nrow)
@@ -23,7 +27,7 @@ defmodule Wordle.Pretty do
 
     keyboard = game_to_keyboard(game)
 
-    [board: board, attempt: nrow, number: game.number, keyboard: keyboard]
+    [board: board, attempt: nattempt, number: game.number, keyboard: keyboard]
   end
 
   def game_to_board(game) do

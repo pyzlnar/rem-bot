@@ -22,6 +22,31 @@ defmodule Wordle.PrettyTest do
       assert 2  == Keyword.get(options, :attempt)
       assert 30 == Keyword.get(options, :number)
     end
+
+    test "handles the case where the player lost by attempt number" do
+      game = %Game{
+        attempts:    ~W[tries bulky clamp wooly jowly dowly],
+        evaluations: [
+          ~W[absent  absent  absent  absent  absent ]a,
+          ~W[absent  absent  present absent  correct]a,
+          ~W[absent  present absent  absent  absent ]a,
+          ~W[present correct absent  correct correct]a,
+          ~W[absent  correct correct correct correct]a,
+          ~W[absent  correct correct correct correct]a
+        ],
+        number: 30,
+        solution: "lowly",
+        state: :lose
+      }
+
+      options = Pretty.board_with_info(game)
+
+      refute is_nil(Keyword.get(options, :board))
+      refute is_nil(Keyword.get(options, :keyboard))
+
+      assert "X" == Keyword.get(options, :attempt)
+      assert 30  == Keyword.get(options, :number)
+    end
   end
 
   describe "game_to_board/1" do
