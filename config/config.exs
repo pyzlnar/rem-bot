@@ -6,6 +6,9 @@ config :nostrum,
 config :logger,
   level: :info
 
+config :tesla,
+  adapter: Tesla.Adapter.Hackney
+
 config :rem,
   commands: ~W[
     help
