@@ -6,6 +6,9 @@ config :logger,
 config :nostrum,
   token: "test_token"
 
+config :tesla,
+  adapter: Tesla.Mock
+
 config :rem, Rem.Discord.Api, %{
   inject: true
 }
@@ -16,3 +19,5 @@ config :rem, Rem.Repo,
   database: "rem_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :rem, Oban, testing: :inline

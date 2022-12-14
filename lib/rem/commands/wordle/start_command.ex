@@ -7,9 +7,6 @@ defmodule Rem.Commands.Wordle.StartCommand do
   alias Rem.Queries.WordleQuery
   alias Rem.Sessions.WordleSession
 
-  # TODO better board
-  # TODO board prints remaining letters
-
   @impl true
   def run(%{author: %{id: user_id}} = msg, args) do
     with {:ok, args}    <- parse_args(args),
@@ -35,16 +32,15 @@ defmodule Rem.Commands.Wordle.StartCommand do
     id =
       cond do
         Regex.match?(~r/^\d{4}-\d{2}-\d{2}$/, id) ->
-          id |> Date.from_iso8601 |> elem(1)
+          id |> Date.from_iso8601 |> elem(1) |> Wordle.date_to_id
         Regex.match?(~r/^\d+$/, id) ->
           id |> String.to_integer
       end
 
-    args = %{number: Wordle.to_valid_id(id), hard: hard_mode?}
-
-    if id,
-      do:   {:ok, args},
-      else: {:error, :invalid_arg_format}
+    case Wordle.Validator.valid_id?(id) do
+      :ok -> {:ok, %{number: id, hard: hard_mode?}}
+      _   -> {:error, :invalid_arg_format}
+    end
   end
 
   defp parse_args([difficulty]) when difficulty in ~W[normal hard] do
@@ -62,7 +58,7 @@ defmodule Rem.Commands.Wordle.StartCommand do
     do: {:error, :invalid_arg_format}
 
   defp default_start_args,
-    do: %{number: Wordle.to_valid_id, hard: false}
+    do: %{number: Wordle.default_id, hard: false}
 
   defp can_start_game?(user_id, number) do
     with :ok <- WordleSession.can_start_session?(user_id),

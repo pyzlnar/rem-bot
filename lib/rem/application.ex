@@ -9,7 +9,8 @@ defmodule Rem.Application do
       Rem.Repo,
       {Registry,          name: Rem.Session.Registry,          keys: :unique},
       {DynamicSupervisor, name: Rem.Session.DynamicSupervisor, strategy: :one_for_one},
-      Rem.Consumer
+      Rem.Consumer,
+      {Oban, Application.fetch_env!(:rem, Oban)}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

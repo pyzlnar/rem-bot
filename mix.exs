@@ -27,6 +27,8 @@ defmodule Rem.MixProject do
 
   defp aliases do
     [
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
@@ -79,11 +81,19 @@ defmodule Rem.MixProject do
 
   defp deps(:normal) do
     [
+      # Discord
+      {:nostrum,  "~> 0.6"},
+      # Database
       {:ecto,     "~> 3.9"},
       {:ecto_sql, "~> 3.9"},
-      {:gettext,  ">= 0.0.0"},
-      {:nostrum,  "~> 0.6"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      # Web services
+      {:tesla,    "~> 1.4"},
+      {:hackney,  "~> 1.18"},
+      # Jobs
+      {:oban,     "~> 2.13"},
+      # Utils
+      {:gettext,  ">= 0.0.0"}
     ]
   end
 

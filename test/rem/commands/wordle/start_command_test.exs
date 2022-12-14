@@ -28,7 +28,7 @@ defmodule Rem.Commands.Wordle.StartCommandTest do
 
   describe "happy paths" do
     test "starts a game with default arguments", %{user_id: user_id, message: message} do
-      number = Wordle.to_valid_id
+      number = Wordle.default_id
       insert(:wordle_solution, number: number, name: "perky")
 
       Rem.Discord.Api
@@ -55,7 +55,7 @@ defmodule Rem.Commands.Wordle.StartCommandTest do
     end
 
     test "starts a game in hard mode", %{message: message, user_id: user_id} do
-      number = Wordle.to_valid_id
+      number = Wordle.default_id
       insert(:wordle_solution, number: number, name: "perky")
 
       Rem.Discord.Api
@@ -108,7 +108,7 @@ defmodule Rem.Commands.Wordle.StartCommandTest do
 
     test "starts a game with a specific date", %{message: message, user_id: user_id} do
       {:ok, date} = Date.new(2022, 01, 01)
-      number      = Wordle.to_valid_id(date)
+      number      = Wordle.date_to_id(date)
       insert(:wordle_solution, number: number, name: "perky")
 
       Rem.Discord.Api
