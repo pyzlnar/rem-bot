@@ -19,3 +19,5 @@ config :rem, Rem.Repo,
   database: "rem_test",
   hostname: "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+config :rem, Oban, testing: :inline

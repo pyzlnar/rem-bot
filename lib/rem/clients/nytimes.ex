@@ -2,7 +2,7 @@ defmodule Rem.Clients.Nytimes do
   use Tesla
 
   alias Tesla.Middleware, as: T
-  alias Rem.Client.Middleware, as: R
+  alias Rem.Clients.Middleware, as: R
 
   plug T.BaseUrl, "https://www.nytimes.com/svc/wordle/v2"
 

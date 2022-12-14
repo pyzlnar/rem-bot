@@ -27,6 +27,8 @@ defmodule Rem.MixProject do
 
   defp aliases do
     [
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
+      "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
@@ -88,6 +90,8 @@ defmodule Rem.MixProject do
       # Web services
       {:tesla,    "~> 1.4"},
       {:hackney,  "~> 1.18"},
+      # Jobs
+      {:oban,     "~> 2.13"},
       # Utils
       {:gettext,  ">= 0.0.0"}
     ]
