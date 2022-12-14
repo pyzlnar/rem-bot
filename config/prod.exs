@@ -6,6 +6,3 @@ config :rem, Rem.Repo,
   database: System.get_env("DB_DATABASE"),
   hostname: System.get_env("DB_HOSTNAME"),
   pool_size: 10
-
-config :porcelain,
-  driver: Porcelain.Driver.Basic
