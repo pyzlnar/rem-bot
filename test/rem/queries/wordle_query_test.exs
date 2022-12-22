@@ -66,6 +66,55 @@ defmodule Rem.Queries.WordleQueryTest do
     end
   end
 
+  describe "game_stats/1" do
+    test "returns stats concerning the number of completed games of an user" do
+      user_id = 1234
+      insert_stats_scenario(user_id)
+
+      expected = [
+        %{state: :win,  tries: 3, count: 2},
+        %{state: :win,  tries: 4, count: 1},
+        %{state: :win,  tries: 6, count: 1},
+        %{state: :lose, tries: 6, count: 2}
+      ]
+
+      assert expected == WordleQuery.game_stats(user_id)
+    end
+  end
+
+  describe "attempt_stats/1" do
+    test "returns stats concerning the attempts used for a given user" do
+      user_id = 1234
+      insert_stats_scenario(user_id)
+
+      expected = [
+        %{attempt: "one",   count: 6},
+        %{attempt: "three", count: 6},
+        %{attempt: "two",   count: 6},
+        %{attempt: "four",  count: 4},
+        %{attempt: "five",  count: 3}
+      ]
+
+      assert expected == WordleQuery.attempt_stats(user_id)
+    end
+  end
+
+  describe "first_attempt_stats/1" do
+    test "returns stats concerning the attempts used for a given user" do
+      user_id = 1234
+      insert_stats_scenario(user_id)
+
+      # Friendly reminder: Attempts order is inversed in DB
+      expected = [
+        %{attempt: "six",   count: 3},
+        %{attempt: "three", count: 2},
+        %{attempt: "four",  count: 1}
+      ]
+
+      assert expected == WordleQuery.first_attempt_stats(user_id)
+    end
+  end
+
   describe "create_game/1" do
     test "inserts a game with the received arguments" do
       user_id = 1234

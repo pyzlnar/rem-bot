@@ -18,6 +18,9 @@ defmodule Rem.Commands.WordleCommand do
   defp run_subcommand(msg, ["resume" | args]),
     do: Wordle.ResumeCommand.run(msg, args)
 
+  defp run_subcommand(msg, ["stats" | args]),
+    do: Wordle.StatsCommand.run(msg, args)
+
   defp run_subcommand(msg, args),
     do: Wordle.UnknownCommand.run(msg, args)
 end
