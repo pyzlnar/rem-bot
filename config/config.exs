@@ -1,7 +1,13 @@
 import Config
 
 config :nostrum,
-  token: System.get_env("DISCORD_TOKEN", "discord_token_missing")
+  token: System.get_env("DISCORD_TOKEN", "discord_token_missing"),
+  gateway_intents: ~W[
+    guilds
+    guild_messages
+    direct_messages
+    message_content
+  ]a
 
 config :logger,
   level: :info
